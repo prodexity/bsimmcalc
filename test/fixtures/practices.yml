@@ -3,3 +3,11 @@
 # This model initially had no columns defined. If you add columns to the
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
+
+practice_one:
+  title: "practice 1"
+  domain: domain_one
+
+practice_two:
+  title: "practice 2"
+  domain: domain_one

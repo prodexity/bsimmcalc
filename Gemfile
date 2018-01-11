@@ -7,6 +7,11 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1'
+
+# FIXME: remove this when Minitest+Rails is fixed
+# https://github.com/seattlerb/minitest/issues/730
+gem 'minitest', '5.10.3'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 
