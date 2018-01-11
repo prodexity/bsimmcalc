@@ -4,8 +4,8 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
+org_one: {name: "Organization A"}
 # column: value
 #
-two: {}
+org_two: {name: "Organization B"}
 # column: value
