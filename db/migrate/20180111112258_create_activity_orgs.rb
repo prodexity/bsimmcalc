@@ -6,5 +6,7 @@ class CreateActivityOrgs < ActiveRecord::Migration[5.1]
       t.boolean :answer, null: false
       t.timestamps
     end
+
+    add_index :activity_orgs, [:activity_id, :org_id], unique: true
   end
 end

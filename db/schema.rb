@@ -10,11 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180111115559) do
+ActiveRecord::Schema.define(version: 20180115232843) do
 
   create_table "activities", force: :cascade do |t|
     t.integer "practice_id", null: false
+    t.string "bsid", null: false
     t.string "title", null: false
+    t.string "descr", null: false
+    t.integer "level", null: false
+    t.integer "version", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -28,8 +32,19 @@ ActiveRecord::Schema.define(version: 20180111115559) do
     t.index ["activity_id", "org_id"], name: "index_activity_orgs_on_activity_id_and_org_id", unique: true
   end
 
+  create_table "activity_verticals", force: :cascade do |t|
+    t.integer "activity_id", null: false
+    t.integer "vertical_id", null: false
+    t.integer "count", null: false
+    t.integer "version", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "domains", force: :cascade do |t|
     t.string "title", null: false
+    t.string "descr", null: false
+    t.integer "version", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -50,6 +65,9 @@ ActiveRecord::Schema.define(version: 20180111115559) do
   create_table "practices", force: :cascade do |t|
     t.integer "domain_id", null: false
     t.string "title", null: false
+    t.string "short", null: false
+    t.string "descr", null: false
+    t.integer "version", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -69,6 +87,14 @@ ActiveRecord::Schema.define(version: 20180111115559) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "verticals", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "numfirms", null: false
+    t.integer "version", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
