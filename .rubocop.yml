@@ -13,6 +13,10 @@ Style/SymbolArray:
   # Allow symbol arrays with [] literals, not just %i or %I
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  # Do not warn about frozen strings magic comment
+  Enabled: false
+
 Metrics/LineLength:
   Max: 135
   # To make it possible to copy or click on URIs in the code, we allow lines
