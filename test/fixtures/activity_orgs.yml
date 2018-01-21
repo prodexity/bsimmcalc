@@ -1,5 +1,19 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+ao_one:
+  activity_id: 1
+  org: org_one
+  answer: 1
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
+ao_two:
+  activity_id: 2
+  org: org_one
+  answer: 0
+
+ao_three:
+  activity_id: 3
+  org: org_one
+  answer: 0
+
+ao_four:
+  activity_id: 1
+  org: org_two
+  answer: 1

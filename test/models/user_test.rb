@@ -1,7 +1,11 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  def setup
+    Rails.application.load_seed
+  end
+
+  test "orgs association" do
+    assert_equal(1, users(:user_one).orgs.count)
+  end
 end

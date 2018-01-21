@@ -6,8 +6,6 @@
 #
 user_one:
   email: "User1@example.intra"
-# column: value
-#
+
 user_two:
   email: "User2@example.intra"
-# column: value
