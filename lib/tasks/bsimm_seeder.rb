@@ -80,7 +80,7 @@ module BsimmSeeder
     retval = []
     page = Nokogiri::HTML(open(BSIMM_URL + practice_url))
     page.css("section.component-column div")[0]
-        .css("div.background-component div.component-text:has(p>b)").each do |practice_html|
+        .css("section.component-textcomp div.component-text:has(p>b)").each do |practice_html|
       title_raw = practice_html.css("p>b").text.strip
       parts = title_raw.match(/\[(([A-Z]+) *((\d)\.\d+))\:.*?([0-9]+)\] (.*)/)
       activity = {
@@ -108,9 +108,41 @@ module BsimmSeeder
     tplt
   end
 
-  def seeds(data)
+  # datafile format:
+  #   header row example: "Activity Financial (of 47) ISV (of 38) Cloud (of 16) Healthcare (of 17) IoT (of 12) Insurance (of 11)"
+  #   bob a mester regidata rows example: "[SM1.1] 30 21 8 7 5 3"
+  def parse_activities_by_vertical(datafile)
     seeds = ""
-    seeds += substitute(VERTICAL_TEMPLATE, name: "Earth", numfirms: 109, version: 8)
+    lines = File.readlines(datafile)
+    headerline = lines.shift
+
+    # parse verticals
+    verticals = headerline.scan(/(\w+)\s+\(of (\d+)\)/)
+    verticals.each do |vert_data|
+      seeds += substitute(VERTICAL_TEMPLATE, name: vert_data[0], numfirms: vert_data[1], version: 8)
+    end
+
+    # parse activity counts by vertical
+    vertical_names = verticals.map { |v| v[0] }
+    lines.each do |line|
+      line_data = line.split
+      bsid = line_data.shift
+      activity_varname = bsid.gsub(/[^\w]/, "")
+      line_data.each_with_index do |count, vert_index|
+        av_data = {
+          activity_varname: activity_varname,
+          vertical_name: vertical_names[vert_index],
+          count: count,
+          version: 8
+        }
+        seeds += substitute(ACTIVITY_VERTICAL_TEMPLATE, av_data)
+      end
+    end
+    seeds
+  end
+
+  def seeds(data)
+    seeds = substitute(VERTICAL_TEMPLATE, name: "Earth", numfirms: 109, version: 8)
     data[:domains].each do |domain_data|
       domain_varname = domain_data[:title].gsub(/[^\w]/, "")
       seeds += substitute(DOMAIN_TEMPLATE, domain_data.merge(domain_varname: domain_varname))
@@ -136,91 +168,6 @@ module BsimmSeeder
       end
     end
 
-    # Verticals and activity data per vertical cannot be downloaded from the web, it is in the pdf only
-    # So this is static data here to be added to the seeds
-    # TODO: this needs data for the rest of the activities (ie. only SM is done here currently)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "Financial", numfirms: 47, version: 8)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "ISV", numfirms: 38, version: 8)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "Cloud", numfirms: 16, version: 8)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "Healthcare", numfirms: 17, version: 8)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "IoT", numfirms: 12, version: 8)
-    seeds += substitute(VERTICAL_TEMPLATE, name: "Insurance", numfirms: 11, version: 8)
-
-    seeds += <<~STATICDATA
-      ActivityVertical.create(activity: a_SM11, vertical: v_Financial, count: 30, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_Financial, count: 22, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_Financial, count: 25, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_Financial, count: 44, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_Financial, count: 24, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_Financial, count: 23, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_Financial, count: 15, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_Financial, count: 14, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_Financial, count: 21, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_Financial, count: 8, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_Financial, count: 1, version: 8)
-
-      ActivityVertical.create(activity: a_SM11, vertical: v_ISV, count: 21, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_ISV, count: 25, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_ISV, count: 20, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_ISV, count: 32, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_ISV, count: 18, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_ISV, count: 11, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_ISV, count: 18, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_ISV, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_ISV, count: 11, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_ISV, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_ISV, count: 6, version: 8)
-
-      ActivityVertical.create(activity: a_SM11, vertical: v_Cloud, count: 8, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_Cloud, count: 10, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_Cloud, count: 9, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_Cloud, count: 14, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_Cloud, count: 10, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_Cloud, count: 7, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_Cloud, count: 8, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_Cloud, count: 3, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_Cloud, count: 7, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_Cloud, count: 3, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_Cloud, count: 5, version: 8)
-
-      ActivityVertical.create(activity: a_SM11, vertical: v_Healthcare, count: 7, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_Healthcare, count: 7, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_Healthcare, count: 7, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_Healthcare, count: 13, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_Healthcare, count: 4, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_Healthcare, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_Healthcare, count: 8, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_Healthcare, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_Healthcare, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_Healthcare, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_Healthcare, count: 1, version: 8)
-
-      ActivityVertical.create(activity: a_SM11, vertical: v_IoT, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_IoT, count: 9, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_IoT, count: 6, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_IoT, count: 8, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_IoT, count: 4, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_IoT, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_IoT, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_IoT, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_IoT, count: 2, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_IoT, count: 1, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_IoT, count: 2, version: 8)
-
-      ActivityVertical.create(activity: a_SM11, vertical: v_Insurance, count: 3, version: 8)
-      ActivityVertical.create(activity: a_SM12, vertical: v_Insurance, count: 3, version: 8)
-      ActivityVertical.create(activity: a_SM13, vertical: v_Insurance, count: 5, version: 8)
-      ActivityVertical.create(activity: a_SM14, vertical: v_Insurance, count: 9, version: 8)
-      ActivityVertical.create(activity: a_SM21, vertical: v_Insurance, count: 4, version: 8)
-      ActivityVertical.create(activity: a_SM22, vertical: v_Insurance, count: 3, version: 8)
-      ActivityVertical.create(activity: a_SM23, vertical: v_Insurance, count: 4, version: 8)
-      ActivityVertical.create(activity: a_SM25, vertical: v_Insurance, count: 1, version: 8)
-      ActivityVertical.create(activity: a_SM26, vertical: v_Insurance, count: 1, version: 8)
-      ActivityVertical.create(activity: a_SM31, vertical: v_Insurance, count: 1, version: 8)
-      ActivityVertical.create(activity: a_SM32, vertical: v_Insurance, count: 1, version: 8)
-    STATICDATA
-    # TODO: Note that as of now, only Governance/SM is included per vertical!
-
-    seeds
+    seeds += parse_activities_by_vertical(Rails.root.to_s + "/db/seeds_verticaldata_from_pdf.txt")
   end
 end
