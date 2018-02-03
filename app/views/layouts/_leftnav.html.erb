@@ -1,0 +1,84 @@
+<div class="navbar nav_title" style="border: 0;">
+  <a href="/" class="site_title"><i class="fa fa-calculator"></i> <span>BSimm 8 Calc</span></a>
+</div>
+
+<div class="clearfix"></div>
+
+<br/>
+
+<!-- sidebar menu -->
+<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+  <div class="menu_section">
+    <h3>General</h3>
+    <ul class="nav side-menu">
+      <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+      <li><a><i class="fa fa-sitemap"></i> BSIMM domains <span class="fa fa-chevron-down"></span></a>
+        <ul class="nav child_menu">
+          <% @domains.each do |domain| %>
+            <li>
+              <a>
+                <%= domain.title %>
+                <span class="label label-danger pull-right"> <!-- count of unanswered activities -->
+                  <%= domain.practices.map { |p| p.activities.count }.reduce(:+) %>
+                </span>
+                <span class="fa fa-chevron-down"></span>
+              </a>
+              <ul class="nav child_menu">
+                <% domain.practices.each do |practice| %>
+                  <li class="sub_menu">
+                    <a href="#">
+                      <%= practice.title %>
+                      <span class="label label-danger pull-right"> <!-- count of unanswered activities -->
+                        <%= practice.activities.count %>
+                      </span>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+      <li><a><i class="fa fa-bar-chart"></i> Analysis <span class="fa fa-chevron-down"></span></a>
+        <ul class="nav child_menu">
+          <li><a href="#">BSIMM Score</a></li>
+          <li><a href="#">By Practice</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <% if user_signed_in? %>
+  <div class="menu_section">
+    <h3>My Calculator</h3>
+    <ul class="nav side-menu">
+      <li><a href="#"><i class="fa fa-building"></i> Saved Organizations</a></li>
+    </ul>
+  </div>
+  <% end %>
+
+</div>
+<!-- /sidebar menu -->
+
+<!-- /menu footer buttons -->
+<div class="sidebar-footer hidden-small">
+  <a data-toggle="tooltip" data-placement="top" title="Settings">
+    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+  </a>
+  <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+    <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+  </a>
+  <a data-toggle="tooltip" data-placement="top" title="Lock">
+    <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+  </a>
+  <% if user_signed_in? %>
+    <%= link_to(destroy_user_session_path, { method: :delete, title: "Logout", 'data-toggle': "tooltip", 'data-placement': "top" }) do %>
+      <span class="glyphicon glyphicon-off red" aria-hidden="true"></span>
+    <% end %>
+  <% else %>
+    <%= link_to(new_user_session_path, { title: "Login", 'data-toggle': "tooltip", 'data-placement': "top" }) do %>
+      <span class="glyphicon glyphicon-off green" aria-hidden="true"></span>
+    <% end %>
+  <% end %>
+</div>
+<!-- /menu footer buttons -->

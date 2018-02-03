@@ -21,7 +21,11 @@ gem 'sqlite3'
 # Use thin as the app server in development / testing
 gem 'thin'
 
+# Authentication
 gem 'devise'
+
+# Admin UI theme based on Bootstrap
+gem 'gentelella-rails'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'

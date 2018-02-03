@@ -1,0 +1,28 @@
+<div class="nav toggle">
+  <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+</div>
+
+<ul class="nav navbar-nav navbar-right">
+  <li class="">
+    <% if user_signed_in? %>
+      <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <%= current_user.email%>
+        <span class=" fa fa-angle-down"></span>
+      </a>
+      <ul class="dropdown-menu dropdown-usermenu pull-right">
+        <li><a href="javascript:;"> Settings</a></li>
+        <li>
+          <%= link_to(destroy_user_session_path, method: :delete) do %>
+            <i class="fa fa-sign-out pull-right"></i> Logout
+          <% end %>
+        </li>
+      </ul>
+    <% else %>
+      <%= link_to(new_user_session_path) do %>
+        <i class="fa fa-sign-in"></i> Login / Register
+      <% end %>
+    <% end %>
+  </li>
+
+</ul>
+
