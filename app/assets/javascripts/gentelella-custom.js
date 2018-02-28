@@ -85,9 +85,9 @@ var setContentHeight = function () {
                 $SIDEBAR_MENU.find('li ul').slideUp();
             }else
             {
-				if ( $BODY.is( ".nav-sm" ) )
+				if ( $BODY.is( ".nav-sm" ) && !$li.parent().is('.child_menu') ) // hotfix for the multi-level menu with minimized leftnav bar
 				{
-					$SIDEBAR_MENU.find( "li" ).removeClass( "active active-sm" );
+		      $SIDEBAR_MENU.find( "li" ).removeClass( "active active-sm" );
 					$SIDEBAR_MENU.find( "li ul" ).slideUp();
 				}
 			}
