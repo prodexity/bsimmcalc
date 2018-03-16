@@ -25,8 +25,8 @@
               </a>
               <ul class="nav child_menu">
                 <% domain.practices.each do |practice| %>
-                  <li class="sub_menu">
-                    <a href="#">
+                  <li class="sub_menu" data-bind="css: { 'current-page': $root.currentPage() == '<%=practice_path(practice.id)%>' }">
+                    <a href="<%=practice_path(practice.id)%>" data-practicepath="<%=practice_path(practice.id)%>" data-bind="click: $root.showPage">
                       <%= practice.title %>
                       <span class="label label-danger pull-right"> <!-- count of unanswered activities -->
                         <%= practice.activities.count %>

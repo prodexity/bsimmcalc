@@ -12,5 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require knockout
 //= require gentelella
 //= require gentelella-custom
+//= require bsimm

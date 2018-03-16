@@ -1,0 +1,7 @@
+<h3>Practice: <%=@practice.title%></h3>
+<div>Activities:</div>
+<div>
+<% @practice.activities.each do |activity| %>
+  <div><%=activity.title%></div>
+<% end %>
+</div>
