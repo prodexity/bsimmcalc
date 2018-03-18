@@ -1,7 +1,23 @@
 <h3>Practice: <%=@practice.title%></h3>
-<div>Activities:</div>
+<div><%=@practice.descr%></div>
+<h4>Activities</h4>
 <div>
 <% @practice.activities.each do |activity| %>
-  <div><%=activity.title%></div>
+  <h5>[<%=activity.bsid%>]: <%=activity.title%> [Level <%=activity.level%>]
+  <div class="btn-group m-l-md" data-toggle="buttons">
+    <div class="btn btn-xs btn-default" data-bind="click: $root.setYesNoBtnColor">
+      <input type="radio" name="activity_answer[<%=activity.id%>]" value="yes">
+      yes
+    </div>
+    <div class="btn btn-xs btn-default" data-bind="click: $root.setYesNoBtnColor">
+      <input type="radio" name="activity_answer[<%=activity.id%>]" value="no">
+      no
+    </div>
+    <div class="btn btn-xs btn-default active" data-bind="click: $root.setYesNoBtnColor">
+      <input type="radio" name="activity_answer[<%=activity.id%>]" value="unknown">
+      no answer
+    </div>
+  </div></h5>
+  <div><%=activity.descr%></div>
 <% end %>
 </div>
