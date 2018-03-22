@@ -10,13 +10,13 @@ before_script:
   - which ruby
   - gem install bundler --no-ri --no-rdoc
 
-tests:
+test:
   stage: test
   script:
     - RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
     - RAILS_ENV=test bundle exec rails db:migrate
     - RAILS_ENV=test bundle exec rails db:seed
-    - bundle exec rails test
+    - RAILS_ENV=test bundle exec rails test
   coverage: '/Coverage.*?\d+\s*\/\s*\d+\s*LOC\s*\((.*?%)\)\s*covered\./'
 
 rubocop:
@@ -28,11 +28,19 @@ rubocop:
 
 deploy_to_uat:
   stage: deploy
+  environment:
+    name: uat
+    url: https://uat.prodexity.com/bsimmcalc
   script:
     - "echo 'deploying to uat...'"
 
 deploy_to_prod:
   stage: deploy
+  environment:
+    name: production
+    url: https://bsimmcalc.prodexity.com
   script:
     - "echo 'deploying to prod...'"
   when: manual
+  only:
+    - master
