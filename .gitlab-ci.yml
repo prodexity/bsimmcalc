@@ -13,10 +13,10 @@ before_script:
 test:
   stage: test
   script:
-    - RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
-    - RAILS_ENV=test bundle exec rails db:migrate
-    - RAILS_ENV=test bundle exec rails db:seed
-    - RAILS_ENV=test bundle exec rails test
+    - bundle install --jobs $(nproc) "${FLAGS[@]}"
+    - bundle exec rails db:migrate
+    - bundle exec rails db:seed
+    - bundle exec rails test
   coverage: '/Coverage.*?\d+\s*\/\s*\d+\s*LOC\s*\((.*?%)\)\s*covered\./'
 
 rubocop:
