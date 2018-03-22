@@ -23,7 +23,7 @@ tests:
     - RAILS_ENV=test bundle exec rake db:migrate
     - RAILS_ENV=test bundle exec rake db:seed
     - bundle exec rails test
-  coverage: "/Coverage.*?\d+\s*\/\s*\d+\s*LOC\s*\((.*?%)\)\s*covered\./"
+  coverage: '/Coverage.*?\d+\s*\/\s*\d+\s*LOC\s*\((.*?%)\)\s*covered\./'
 
 rubocop:
   stage: test
