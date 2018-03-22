@@ -1,0 +1,43 @@
+image: "ruby:2.3"
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq ruby-dev nodejs libsqlite3-dev
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-ri --no-rdoc
+
+build:
+  stage: build
+  script:
+    - "echo 'It is built now!'"
+
+tests:
+  stage: test
+  script:
+    - RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
+    - RAILS_ENV=test bundle exec rake db:migrate
+    - RAILS_ENV=test bundle exec rake db:seed
+    - bundle exec rails test
+  coverage: "/Coverage.*?\d+\s*\/\s*\d+\s*LOC\s*\((.*?%)\)\s*covered\./"
+
+rubocop:
+  stage: test
+  script:
+    - bundle exec rubocop
+  allow_failure: true
+
+deploy_to_uat:
+  stage: deploy
+  script:
+    - "echo 'deploying to uat...'"
+
+deploy_to_prod:
+  stage: deploy
+  script:
+    - "echo 'deploying to prod...'"
+  when: manual
