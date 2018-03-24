@@ -31,8 +31,17 @@ deploy_to_uat:
   environment:
     name: uat
     url: https://uat.prodexity.com/bsimmcalc
+  variables:
+    DEPLOY_SERVER: uat.prodexity.com
+    DEPLOY_USER: prodexityuat
+    DEPLOY_APPNAME: bsimmcalc
+    DEPLOY_ORIGIN: "ssh://git@gitlab.com/lengyelg/bsimmcalc"
   script:
-    - "echo 'deploying to uat...'"
+    - touch ./key
+    - chmod 600 ./key
+    - echo $UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ./key
+    - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o SendEnv="CI_* DEPLOY_*" -i ./key $DEPLOY_USER@$DEPLOY_SERVER ./bin/deployrails.sh
+    - rm ./key
 
 deploy_to_prod:
   stage: deploy
