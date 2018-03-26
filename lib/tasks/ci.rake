@@ -1,0 +1,67 @@
+# rubocop:disable Metrics/BlockLength, Style/SpecialGlobalVars
+namespace :ci do
+  # rubocop:disable Style/SingleLineMethods, Layout/EmptyLineBetweenDefs
+  class String
+    def black;          "\e[30m#{self}\e[0m" end
+    def red;            "\e[31m#{self}\e[0m" end
+    def green;          "\e[32m#{self}\e[0m" end
+    def brown;          "\e[33m#{self}\e[0m" end
+    def blue;           "\e[34m#{self}\e[0m" end
+    def magenta;        "\e[35m#{self}\e[0m" end
+    def cyan;           "\e[36m#{self}\e[0m" end
+    def gray;           "\e[37m#{self}\e[0m" end
+    def bg_black;       "\e[40m#{self}\e[0m" end
+    def bg_red;         "\e[41m#{self}\e[0m" end
+    def bg_green;       "\e[42m#{self}\e[0m" end
+    def bg_brown;       "\e[43m#{self}\e[0m" end
+    def bg_blue;        "\e[44m#{self}\e[0m" end
+    def bg_magenta;     "\e[45m#{self}\e[0m" end
+    def bg_cyan;        "\e[46m#{self}\e[0m" end
+    def bg_gray;        "\e[47m#{self}\e[0m" end
+    def bold;           "\e[1m#{self}\e[22m" end
+    def italic;         "\e[3m#{self}\e[23m" end
+    def underline;      "\e[4m#{self}\e[24m" end
+    def blink;          "\e[5m#{self}\e[25m" end
+    def reverse_color;  "\e[7m#{self}\e[27m" end
+  end
+  # rubocop:enable Style/SingleLineMethods, Layout/EmptyLineBetweenDefs
+
+  desc "Perform all kinds of tests that CI/CD will until deployment"
+  task tests: :environment do
+    success = true
+    results = ""
+
+    puts "Running Rubocop...".cyan.bold
+    system("bundle exec rubocop")
+    if $?.exitstatus != 0
+      results += "Failed on Rubocop.".red.bold
+      success = false
+    end
+
+    puts "Running Brakeman...".cyan.bold
+    system("bundle exec brakeman")
+    if $?.exitstatus != 0
+      results += "Failed on Brakeman.".red.bold
+      success = false
+    end
+
+    puts "Running the standard test suite...".cyan.bold
+    system("bundle exec rails test")
+    if $?.exitstatus != 0
+      results += "Failed on tests.".red.bold
+      success = false
+    end
+
+    puts ""
+    puts "CI tests result:".cyan.bold.underline
+    if success
+      puts "Everything is ok!".green.bold
+      exit 0
+    else
+      puts results
+      exit 1
+    end
+    puts ""
+  end
+end
+# rubocop:enable Metrics/BlockLength, Style/SpecialGlobalVars
