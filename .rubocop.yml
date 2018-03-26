@@ -1,6 +1,11 @@
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: 2.3
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'bin/**/*'
+    - 'test/**/*'
 
 Rails:
   Enabled: true
@@ -15,6 +20,9 @@ Style/SymbolArray:
 
 Style/FrozenStringLiteralComment:
   # Do not warn about frozen strings magic comment
+  Enabled: false
+
+Style/Documentation:
   Enabled: false
 
 Metrics/LineLength:

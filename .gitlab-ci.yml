@@ -29,7 +29,6 @@ rubocop:
   script:
     - bundle install
     - bundle exec rubocop
-  allow_failure: true
 
 .precompile_assets:
   stage: asset_precompile

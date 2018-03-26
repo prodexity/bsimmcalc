@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module BsimmSeeder
   require 'nokogiri'
   require 'open-uri'
@@ -171,3 +172,4 @@ module BsimmSeeder
     seeds += parse_activities_by_vertical(Rails.root.to_s + "/db/seeds_verticaldata_from_pdf.txt")
   end
 end
+# rubocop:enable Metrics/ModuleLength
