@@ -2,7 +2,6 @@ image: "ruby:2.3"
 
 stages:
   - test
-  - asset_precompile
   - deploy
 
 cache:
@@ -27,23 +26,14 @@ test:
 rubocop:
   stage: test
   script:
-    - bundle install
+    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
     - bundle exec rubocop
 
-.precompile_assets:
-  stage: asset_precompile
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq ruby-dev nodejs libsqlite3-dev graphviz
-    - ruby -v
-    - which ruby
-    - gem install bundler --no-ri --no-rdoc
+brakeman:
+  stage: test
   script:
     - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
-    - RAILS_ENV=production SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
-  artifacts:
-    paths:
-      - public/assets/
-    expire_in: 1 day
+    - bundle exec brakeman
 
 deploy_to_uat:
   stage: deploy
