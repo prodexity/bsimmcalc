@@ -55,7 +55,7 @@ deploy_to_uat:
     DEPLOY_SERVER: uat.bsimmcalc.prodexity.com
     DEPLOY_USER: bsimmcalc-uat
     DEPLOY_APPNAME: bsimmcalc
-    DEPLOY_ORIGIN: "ssh://git@gitlab.com/lengyelg/bsimmcalc"
+    DEPLOY_ORIGIN: "ssh://git@gitlab.com/prodexity/bsimmcalc"
   script:
     - apt-get update && apt-get install -y -qq openssh-client
     - touch ./key
