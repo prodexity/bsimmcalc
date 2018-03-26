@@ -2,7 +2,13 @@ image: "ruby:2.3"
 
 stages:
   - test
+  - asset_precompile
   - deploy
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/bundle
 
 test:
   stage: test
@@ -12,7 +18,7 @@ test:
     - which ruby
     - gem install bundler --no-ri --no-rdoc
   script:
-    - bundle install --jobs $(nproc) "${FLAGS[@]}"
+    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
     - bundle exec rails db:migrate
     - bundle exec rails db:seed
     - bundle exec rails test
@@ -25,6 +31,21 @@ rubocop:
     - bundle exec rubocop
   allow_failure: true
 
+.precompile_assets:
+  stage: asset_precompile
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq ruby-dev nodejs libsqlite3-dev graphviz
+    - ruby -v
+    - which ruby
+    - gem install bundler --no-ri --no-rdoc
+  script:
+    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
+    - RAILS_ENV=production SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
+  artifacts:
+    paths:
+      - public/assets/
+    expire_in: 1 day
+
 deploy_to_uat:
   stage: deploy
   image: "ubuntu:rolling"
@@ -32,14 +53,14 @@ deploy_to_uat:
     name: uat
     url: https://uat.prodexity.com/bsimmcalc
   variables:
-    DEPLOY_SERVER: uat.prodexity.com
-    DEPLOY_USER: prodexityuat
+    DEPLOY_SERVER: uat.bsimmcalc.prodexity.com
+    DEPLOY_USER: bsimmcalc-uat
     DEPLOY_APPNAME: bsimmcalc
     DEPLOY_ORIGIN: "ssh://git@gitlab.com/lengyelg/bsimmcalc"
   script:
     - touch ./key
     - chmod 600 ./key
-    - echo $UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ./key
+    - echo $BSIMMCALC_UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ./key
     - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o SendEnv="CI_* DEPLOY_*" -i ./key $DEPLOY_USER@$DEPLOY_SERVER ./bin/deployrails.sh
     - rm ./key
 
