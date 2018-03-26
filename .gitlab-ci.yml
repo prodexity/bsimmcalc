@@ -37,6 +37,7 @@ deploy_to_uat:
     DEPLOY_APPNAME: bsimmcalc
     DEPLOY_ORIGIN: "ssh://git@gitlab.com/lengyelg/bsimmcalc"
   script:
+    - apt-get update && apt-get install -y -qq openssh-client
     - touch ./key
     - chmod 600 ./key
     - echo $UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ./key
