@@ -166,9 +166,6 @@ GEM
       ast (~> 2.3)
     parsley-rails (2.7.0.0)
       railties (>= 3.0.0)
-    passenger (5.2.1)
-      rack
-      rake (>= 0.8.1)
     powerpack (0.1.1)
     rack (2.0.3)
     rack-test (0.8.2)
@@ -294,7 +291,6 @@ DEPENDENCIES
   knockoutjs-rails
   listen (~> 3.0.5)
   minitest (= 5.10.3)
-  passenger
   rails (~> 5.1)
   rails-erd
   rubocop
