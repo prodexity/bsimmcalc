@@ -48,33 +48,33 @@ gem 'jbuilder', '~> 2.5'
 # Use KnockoutJS for client-side MVVM
 gem 'knockoutjs-rails'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
-
+  # Use Capistrano for deployment
+  gem "capistrano", "~> 3.10", require: false
+  # Capistrano Rails extensions
+  gem "capistrano-rails", "~> 1.3", require: false
+  # Only compile assets if changed
+  gem 'capistrano-faster-assets'
+  # Capistrano Passenger extensions
+  gem 'capistrano-passenger'
+  # Listen to file modifications
+  gem 'listen', '~> 3.0.5'
   # Static security scan
-  gem 'brakeman'
+  gem 'brakeman', require: false
+  # Rubocop for a consistent coding style
+  gem 'rubocop', require: false
+  # Draw nice ERD diagrams for the database -> sudo apt-get install graphviz
+  gem 'rails-erd'
+  # Calculate code coverage
+  gem 'simplecov', require: false
 end
 
 group :development do
-  gem 'listen', '~> 3.0.5'
-  # Draw nice ERD diagrams for the database
-  # sudo apt-get install graphviz
-  gem 'rails-erd'
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'
-end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-
-group :development do
-  gem 'rubocop', require: false
-end
-
-group :test do
-  gem 'simplecov', require: false
 end

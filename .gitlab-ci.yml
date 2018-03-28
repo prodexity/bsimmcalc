@@ -4,6 +4,13 @@ stages:
   - test
   - deploy
 
+before_script:
+  - apt-get update -qq && apt-get install -y -qq ruby-dev nodejs libsqlite3-dev graphviz
+  - ruby -v
+  - which ruby
+  - gem install bundler --no-ri --no-rdoc
+  - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
+
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
@@ -11,13 +18,7 @@ cache:
 
 test:
   stage: test
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq ruby-dev nodejs libsqlite3-dev graphviz
-    - ruby -v
-    - which ruby
-    - gem install bundler --no-ri --no-rdoc
   script:
-    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
     - bundle exec rails db:migrate
     - bundle exec rails db:seed
     - bundle exec rails test
@@ -26,42 +27,40 @@ test:
 rubocop:
   stage: test
   script:
-    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
     - bundle exec rubocop
 
 brakeman:
   stage: test
   script:
-    - bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor/bundle
     - bundle exec brakeman
 
 deploy_to_uat:
   stage: deploy
-  image: "ubuntu:rolling"
   environment:
     name: uat
-    url: https://uat.prodexity.com/bsimmcalc
-  variables:
-    DEPLOY_SERVER: uat.bsimmcalc.prodexity.com
-    DEPLOY_USER: bsimmcalc-uat
-    DEPLOY_APPNAME: bsimmcalc
-    DEPLOY_ORIGIN: "ssh://git@gitlab.com/prodexity/bsimmcalc"
+    url: https://uat.bsimmcalc.prodexity.com
   script:
-    - apt-get update && apt-get install -y -qq openssh-client
-    - touch ./key
-    - chmod 600 ./key
-    - echo $BSIMMCALC_UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ./key
-    - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o SendEnv="CI_* DEPLOY_*" -i ./key $DEPLOY_USER@$DEPLOY_SERVER ./bin/deployrails.sh
-    - rm ./key
+    - mkdir -p ~/.ssh
+    - touch ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo $BSIMMCALC_UAT_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ~/.ssh/id_rsa
+    - bundle exec cap uat deploy
+    - bundle exec cap uat deploy:seed
+    - rm ~/.ssh/id_rsa
 
 deploy_to_prod:
   stage: deploy
-  image: "ubuntu:rolling"
   environment:
     name: production
     url: https://bsimmcalc.prodexity.com
   script:
-    - "echo 'deploying to prod...'"
+    - mkdir -p ~/.ssh
+    - touch ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo $BSIMMCALC_PROD_SSH_KEY | sed 's/ RSA PRIVATE KEY/RSAPRIVKEY/g' | sed 's/ /\n/g' | sed 's/RSAPRIVKEY/ RSA PRIVATE KEY/g' > ~/.ssh/id_rsa
+    - bundle exec cap production deploy
+    - bundle exec cap production deploy:seed
+    - rm ~/.ssh/id_rsa
   when: manual
   only:
     - master
