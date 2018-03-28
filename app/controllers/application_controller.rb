@@ -8,5 +8,7 @@ class ApplicationController < ActionController::Base
 
   def revision
     @revision = File.read(Rails.root + 'REVISION')
+  rescue StandardError
+    @revision = "unknown"
   end
 end
