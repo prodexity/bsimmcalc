@@ -1,2 +1,4 @@
+# THIS PROJECT WAS MOVED TO GITLAB.
+
 # bsimmcalc
 
