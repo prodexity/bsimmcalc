@@ -1,9 +1,17 @@
 {
   "summary": {
-    "title": "bsimmcalc test"
+    "title": "bsimmcalc test",
+    "description": "bsimm8 calculator",
+    "owner": "GL"
   },
   "detail": {
     "contributors": [],
-    "diagrams": []
+    "diagrams": [
+      {
+        "title": "HLA",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0
+      }
+    ]
   }
 }
